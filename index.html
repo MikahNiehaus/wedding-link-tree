@@ -243,11 +243,25 @@ footer{
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var ctx, analyser, freqData, connected = false;
 
+  function drawGlow(spiky){
+    if (!photo) return;
+    if (!spiky){
+      photo.style.setProperty('--glow-o', .5);
+      photo.style.setProperty('--glow-s', 1);
+      return;
+    }
+    var sum = 0;
+    for (var i = 0; i < freqData.length; i++) sum += freqData[i];
+    var level = sum / freqData.length / 255;
+    photo.style.setProperty('--glow-o', (.4 + level * .7).toFixed(3));
+    photo.style.setProperty('--glow-s', (1 + level * .14).toFixed(3));
+  }
+
   function render(){
-    var muted = audio.muted;
-    btn.classList.toggle('is-muted', muted);
-    btn.setAttribute('aria-pressed', !muted);
-    var label = muted ? 'Unmute music' : 'Mute music';
+    var audible = !audio.paused && !audio.muted;
+    btn.classList.toggle('is-muted', !audible);
+    btn.setAttribute('aria-pressed', audible);
+    var label = audible ? 'Mute music' : 'Unmute music';
     btn.setAttribute('aria-label', label);
     btn.title = label;
   }
@@ -262,7 +276,7 @@ footer{
       if (ctx.state !== 'running') return;
       var src = ctx.createMediaElementSource(audio);
       analyser = ctx.createAnalyser();
-      analyser.fftSize = 64;
+      analyser.fftSize = 256;
       analyser.smoothingTimeConstant = .75;
       src.connect(analyser);
       analyser.connect(ctx.destination);
@@ -273,35 +287,35 @@ footer{
 
   function tick(){
     requestAnimationFrame(tick);
-    if (!photo) return;
     if (!connected) tryConnectVisualizer();
-    if (!connected || reduced || audio.paused || audio.muted){
-      photo.style.setProperty('--glow-o', .5);
-      photo.style.setProperty('--glow-s', 1);
-      return;
-    }
-    analyser.getByteFrequencyData(freqData);
-    var sum = 0;
-    for (var i = 0; i < freqData.length; i++) sum += freqData[i];
-    var level = sum / freqData.length / 255;
-    photo.style.setProperty('--glow-o', (.4 + level * .7).toFixed(3));
-    photo.style.setProperty('--glow-s', (1 + level * .14).toFixed(3));
+    var spiky = connected && !audio.paused && !audio.muted;
+    if (spiky) analyser.getByteFrequencyData(freqData);
+    drawGlow(spiky);
   }
 
+  var wantsSound = false;
+  try { wantsSound = localStorage.getItem('bgmUnmuted') === '1'; } catch(e){}
+
   btn.addEventListener('click', function(){
-    audio.muted = !audio.muted;
-    if (audio.paused) audio.play().catch(function(){});
+    var audible = !audio.paused && !audio.muted;
+    if (audible){
+      audio.muted = true;
+    } else {
+      audio.muted = false;
+      if (audio.paused) audio.play().catch(function(){});
+    }
+    try { localStorage.setItem('bgmUnmuted', audio.muted ? '' : '1'); } catch(e){}
     tryConnectVisualizer();
     render();
   });
 
   audio.muted = false;
   audio.play().catch(function(){
-    audio.muted = true;
+    if (!wantsSound) audio.muted = true;
     return audio.play().catch(function(){});
   }).then(render, render);
   render();
-  if (!reduced) tick();
+  if (reduced) drawGlow(false); else tick();
 })();
 </script>
 </body>
