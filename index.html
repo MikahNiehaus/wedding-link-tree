@@ -50,6 +50,7 @@ body{
   overflow-x:hidden;
 }
 a{color:inherit}
+a,button{-webkit-tap-highlight-color:transparent}
 
 /* ── drifting petals ─────────────────────────────── */
 .petals{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden}
@@ -83,14 +84,12 @@ main{
 }
 .photo::before{
   content:""; position:absolute; inset:-8px; border:1px solid rgba(201,154,78,.4); border-radius:50%;
-  animation:photoGlow 4.5s ease-in-out infinite;
-}
-@keyframes photoGlow{
-  0%,100%{ box-shadow:0 0 0 0 rgba(201,154,78,.35) }
-  50%{ box-shadow:0 0 14px 4px rgba(201,154,78,.35) }
+  box-shadow:0 0 14px 4px rgba(201,154,78,.35);
+  opacity:var(--glow-o,.32); transform:scale(var(--glow-s,1));
+  transition:opacity .09s linear, transform .09s linear;
 }
 @media (prefers-reduced-motion:reduce){
-  .photo::before{ animation:none }
+  .photo::before{ transition:none }
   .photo img{ transition:none }
 }
 
@@ -156,10 +155,6 @@ footer{
   color:var(--espresso-soft); font-size:.85rem; font-style:italic;
   display:flex; align-items:center; justify-content:center; gap:6px;
 }
-.credit{
-  font-size:.68rem; color:var(--card-line); margin:6px 0 0; letter-spacing:.02em;
-}
-.credit a{ color:var(--card-line); text-decoration:underline; text-underline-offset:2px }
 
 /* ── music toggle ─────────────────────────────────── */
 .music-btn{
@@ -171,14 +166,22 @@ footer{
   cursor:pointer; transition:background .16s ease, color .16s ease;
 }
 .music-btn svg{ width:20px; height:20px }
+.music-btn .ic-off{ display:none }
+.music-btn.is-muted .ic-on{ display:none }
+.music-btn.is-muted .ic-off{ display:block }
 .music-btn:hover, .music-btn:focus-visible{ background:var(--blush); color:#fff; outline:none }
 .music-btn:focus-visible{ box-shadow:0 0 0 3px rgba(201,154,78,.45) }
-.music-btn.is-playing{ animation:musicPulse 2.2s ease-in-out infinite }
-@keyframes musicPulse{
-  0%,100%{ box-shadow:0 2px 8px rgba(58,42,26,.12), 0 0 0 0 rgba(201,154,78,.4) }
-  50%{ box-shadow:0 2px 8px rgba(58,42,26,.12), 0 0 0 8px rgba(201,154,78,0) }
+.music-btn::before, .music-btn::after{
+  content:""; position:absolute; inset:0; border-radius:50%;
+  border:1px solid var(--gold); opacity:0; pointer-events:none;
 }
-@media (prefers-reduced-motion:reduce){ .music-btn.is-playing{ animation:none } }
+.music-btn.is-playing::before{ animation:soundWave 2s ease-out infinite }
+.music-btn.is-playing::after{ animation:soundWave 2s ease-out infinite; animation-delay:1s }
+@keyframes soundWave{
+  0%{ transform:scale(1); opacity:.55 }
+  100%{ transform:scale(1.9); opacity:0 }
+}
+@media (prefers-reduced-motion:reduce){ .music-btn::before, .music-btn::after{ animation:none } }
 
 /* ── load sequence ────────────────────────────────── */
 @media (prefers-reduced-motion:no-preference){
@@ -195,9 +198,11 @@ footer{
 </head>
 <body>
 
+<!-- music: "Love" by Alex-Productions (https://onsound.eu/), CC BY 3.0 -->
 <audio id="bgm" src="assets/wedding-music.mp3" loop preload="auto"></audio>
-<button id="musicBtn" class="music-btn fade" style="animation-delay:.9s" type="button" aria-pressed="false" aria-label="Play music" title="Play music">
-  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
+<button id="musicBtn" class="music-btn fade is-playing" style="animation-delay:.9s" type="button" aria-pressed="true" aria-label="Mute music" title="Mute music">
+  <svg class="ic ic-on" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
+  <svg class="ic ic-off" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.6"/><line x1="2" y1="2" x2="22" y2="22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
 </button>
 
 <div class="petals" aria-hidden="true">
@@ -234,7 +239,6 @@ footer{
   </nav>
 
   <footer class="fade" style="animation-delay:.85s">with love, Morgan <span aria-hidden="true">&amp;</span> Mikah</footer>
-  <p class="credit fade" style="animation-delay:.95s">music: “Love” by <a href="https://onsound.eu/" target="_blank" rel="noopener">Alex-Productions</a>, CC BY 3.0</p>
 
 </main>
 
@@ -242,22 +246,72 @@ footer{
 (function(){
   var audio = document.getElementById('bgm');
   var btn = document.getElementById('musicBtn');
-  function setPlaying(on){
-    btn.classList.toggle('is-playing', on);
-    btn.setAttribute('aria-pressed', on);
-    var label = on ? 'Pause music' : 'Play music';
+  var photo = document.querySelector('.photo');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var userSet = false;
+  var ctx, analyser, freqData, connected = false;
+
+  function render(){
+    var muted = audio.muted;
+    btn.classList.toggle('is-muted', muted);
+    btn.classList.toggle('is-playing', !audio.paused && !muted);
+    btn.setAttribute('aria-pressed', !muted);
+    var label = muted ? 'Unmute music' : 'Mute music';
     btn.setAttribute('aria-label', label);
     btn.title = label;
   }
-  btn.addEventListener('click', function(){
-    if (audio.paused) {
-      audio.play().then(function(){ setPlaying(true); }).catch(function(){});
-    } else {
-      audio.pause();
-      setPlaying(false);
+
+  function tryConnectVisualizer(){
+    if (connected || reduced) return;
+    try{
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      ctx = ctx || new Ctx();
+      if (ctx.state === 'suspended') ctx.resume();
+      if (ctx.state !== 'running') return;
+      var src = ctx.createMediaElementSource(audio);
+      analyser = ctx.createAnalyser();
+      analyser.fftSize = 64;
+      analyser.smoothingTimeConstant = .75;
+      src.connect(analyser);
+      analyser.connect(ctx.destination);
+      freqData = new Uint8Array(analyser.frequencyBinCount);
+      connected = true;
+    } catch(e){ connected = false; }
+  }
+
+  function tick(){
+    requestAnimationFrame(tick);
+    if (!photo) return;
+    if (!connected) tryConnectVisualizer();
+    if (!connected || reduced || audio.paused || audio.muted){
+      photo.style.setProperty('--glow-o', .32);
+      photo.style.setProperty('--glow-s', 1);
+      return;
     }
+    analyser.getByteFrequencyData(freqData);
+    var sum = 0;
+    for (var i = 0; i < freqData.length; i++) sum += freqData[i];
+    var level = sum / freqData.length / 255;
+    photo.style.setProperty('--glow-o', (.22 + level * .85).toFixed(3));
+    photo.style.setProperty('--glow-s', (1 + level * .14).toFixed(3));
+  }
+
+  btn.addEventListener('click', function(){
+    userSet = true;
+    audio.muted = !audio.muted;
+    if (audio.paused) audio.play().catch(function(){});
+    tryConnectVisualizer();
+    render();
   });
-  audio.play().then(function(){ setPlaying(true); }).catch(function(){ setPlaying(false); });
+
+  audio.muted = false;
+  audio.play().catch(function(){
+    if (!userSet) audio.muted = true;
+    return audio.play().catch(function(){});
+  }).then(render, render);
+  render();
+  if (!reduced) tick();
 })();
 </script>
 </body>
