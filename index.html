@@ -14,15 +14,28 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='24' font-size='24' text-anchor='middle'%3E%F0%9F%A4%8D%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400;1,500&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400;1,500&display=swap" rel="stylesheet">
 <style>
+@font-face{
+  font-family:'Sharis'; src:url('assets/fonts/Sharis Light.otf') format('opentype');
+  font-weight:300; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'Sharis'; src:url('assets/fonts/Sharis Regular.otf') format('opentype');
+  font-weight:400; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'BlostaScript'; src:url('assets/fonts/Blosta-Script.otf') format('opentype');
+  font-weight:normal; font-style:normal; font-display:swap;
+}
 :root{
   --cream:#fbf1e4; --card:#fffdf9; --card-line:#e6cfa9;
   --espresso:#3a2a1a; --espresso-soft:#6b4c30;
   --gold:#c99a4e; --blush:#e3a79b; --blush-deep:#c97b74;
   --serif:"Cormorant Garamond",Georgia,serif;
   --body:"EB Garamond",Georgia,serif;
-  --script:"Mrs Saint Delafield",cursive;
+  --name-font:"Sharis",Georgia,serif;
+  --script:"BlostaScript",cursive;
 }
 *{box-sizing:border-box}
 body{
@@ -82,9 +95,11 @@ main{
 }
 
 h1{
-  margin:0 0 6px; font-weight:300; font-family:var(--serif);
-  font-size:clamp(2.5rem,9vw,3.4rem); letter-spacing:.03em; line-height:1.05;
-  display:flex; align-items:baseline; justify-content:center; flex-wrap:wrap; gap:.05em;
+  margin:0 0 6px; font-weight:300; font-family:var(--name-font);
+  text-transform:uppercase;
+  font-size:clamp(1.5rem,7.2vw,2.3rem); letter-spacing:.06em; line-height:1.05;
+  display:flex; align-items:baseline; justify-content:center; flex-wrap:nowrap; gap:.04em;
+  white-space:nowrap;
 }
 h1 .amp{
   font-family:var(--script); font-size:1.5em; color:var(--blush-deep);
@@ -141,6 +156,29 @@ footer{
   color:var(--espresso-soft); font-size:.85rem; font-style:italic;
   display:flex; align-items:center; justify-content:center; gap:6px;
 }
+.credit{
+  font-size:.68rem; color:var(--card-line); margin:6px 0 0; letter-spacing:.02em;
+}
+.credit a{ color:var(--card-line); text-decoration:underline; text-underline-offset:2px }
+
+/* ── music toggle ─────────────────────────────────── */
+.music-btn{
+  position:fixed; top:16px; right:16px; z-index:5;
+  width:44px; height:44px; border-radius:50%;
+  background:var(--card); border:1px solid var(--card-line); color:var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 8px rgba(58,42,26,.12);
+  cursor:pointer; transition:background .16s ease, color .16s ease;
+}
+.music-btn svg{ width:20px; height:20px }
+.music-btn:hover, .music-btn:focus-visible{ background:var(--blush); color:#fff; outline:none }
+.music-btn:focus-visible{ box-shadow:0 0 0 3px rgba(201,154,78,.45) }
+.music-btn.is-playing{ animation:musicPulse 2.2s ease-in-out infinite }
+@keyframes musicPulse{
+  0%,100%{ box-shadow:0 2px 8px rgba(58,42,26,.12), 0 0 0 0 rgba(201,154,78,.4) }
+  50%{ box-shadow:0 2px 8px rgba(58,42,26,.12), 0 0 0 8px rgba(201,154,78,0) }
+}
+@media (prefers-reduced-motion:reduce){ .music-btn.is-playing{ animation:none } }
 
 /* ── load sequence ────────────────────────────────── */
 @media (prefers-reduced-motion:no-preference){
@@ -156,6 +194,11 @@ footer{
 </style>
 </head>
 <body>
+
+<audio id="bgm" src="assets/wedding-music.mp3" loop preload="auto"></audio>
+<button id="musicBtn" class="music-btn fade" style="animation-delay:.9s" type="button" aria-pressed="false" aria-label="Play music" title="Play music">
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
+</button>
 
 <div class="petals" aria-hidden="true">
   <span class="petal" style="left:8%;  animation-duration:16s; animation-delay:0s;  --dx:40px;  --rot:200deg;"><svg width="16" height="16" viewBox="0 0 20 20"><path d="M10,2 C14,2 18,6 10,18 C2,6 6,2 10,2 Z" fill="var(--blush)"/></svg></span>
@@ -184,12 +227,38 @@ footer{
 
   <nav aria-label="Wedding links">
   <ul class="links">
-    <li class="fade" style="animation-delay:.44s"><a href="https://www.birdygrey.com/collections/wedding-guest-dresses?filter.tags_color_bar=sage&amp;filter.tags_color_bar=sea+glass&amp;filter.tags_color_bar=eucalyptus&amp;filter.tags_color_bar=espresso&amp;filter.tags_color_bar=chocolate+brown"><span class="ic" aria-hidden="true">👗</span><span class="label">Guest Attire</span><span class="go">shop →</span></a></li>
+    <li class="fade" style="animation-delay:.44s"><a href="https://www.birdygrey.com/collections/wedding-guest-dresses?filter.tags_color_bar=sage&amp;filter.tags_color_bar=sea+glass&amp;filter.tags_color_bar=eucalyptus&amp;filter.tags_color_bar=espresso&amp;filter.tags_color_bar=chocolate+brown"><span class="ic" aria-hidden="true">👰🏾</span><span class="label">Dresses</span><span class="go">Birdy Grey →</span></a></li>
+    <li class="fade" style="animation-delay:.50s"><a href="https://theblacktux.com/collections/all-tailoring?filter.p.m.custom.color_update=Black&amp;filter.p.m.custom.color_update=Brown&amp;filter.p.m.custom.color_update=Green&amp;filter.p.m.custom.color_update=Grey"><span class="ic" aria-hidden="true">🤵🏾</span><span class="label">Suits</span><span class="go">The Black Tux →</span></a></li>
+    <li class="fade" style="animation-delay:.56s"><a href="https://menguin.com/collection/tuxedos-and-suits?color=Black%2CGrey%2CGreen"><span class="ic" aria-hidden="true">🤵🏾</span><span class="label">Suits</span><span class="go">Menguin →</span></a></li>
   </ul>
   </nav>
 
-  <footer class="fade" style="animation-delay:.85s">made with <span aria-hidden="true">♡</span> for our people</footer>
+  <footer class="fade" style="animation-delay:.85s">with love, Morgan <span aria-hidden="true">&amp;</span> Mikah</footer>
+  <p class="credit fade" style="animation-delay:.95s">music: “Love” by <a href="https://onsound.eu/" target="_blank" rel="noopener">Alex-Productions</a>, CC BY 3.0</p>
 
 </main>
+
+<script>
+(function(){
+  var audio = document.getElementById('bgm');
+  var btn = document.getElementById('musicBtn');
+  function setPlaying(on){
+    btn.classList.toggle('is-playing', on);
+    btn.setAttribute('aria-pressed', on);
+    var label = on ? 'Pause music' : 'Play music';
+    btn.setAttribute('aria-label', label);
+    btn.title = label;
+  }
+  btn.addEventListener('click', function(){
+    if (audio.paused) {
+      audio.play().then(function(){ setPlaying(true); }).catch(function(){});
+    } else {
+      audio.pause();
+      setPlaying(false);
+    }
+  });
+  audio.play().then(function(){ setPlaying(true); }).catch(function(){ setPlaying(false); });
+})();
+</script>
 </body>
 </html>
