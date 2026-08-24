@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morgan &amp; Mikah</title>
+<meta name="description" content="Morgan &amp; Mikah are getting married — RSVP, registry, our story, and more.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='24' font-size='24' text-anchor='middle'%3E%F0%9F%A4%8D%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400;1,500&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#fbf1e4; --card:#fffdf9; --card-line:#e6cfa9;
+  --espresso:#3a2a1a; --espresso-soft:#6b4c30;
+  --gold:#c99a4e; --blush:#e3a79b; --blush-deep:#c97b74;
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --body:"EB Garamond",Georgia,serif;
+  --script:"Mrs Saint Delafield",cursive;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100svh; background:var(--cream); color:var(--espresso);
+  font-family:var(--body);
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(60% 40% at 12% 8%, rgba(227,167,155,.28) 0%, transparent 70%),
+    radial-gradient(55% 38% at 90% 92%, rgba(201,154,78,.22) 0%, transparent 70%);
+  background-repeat:no-repeat;
+  position:relative;
+  overflow-x:hidden;
+}
+a{color:inherit}
+
+/* ── drifting petals ─────────────────────────────── */
+.petals{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden}
+.petal{position:absolute; top:-8%; font-size:18px; opacity:.55; animation:drift linear infinite}
+@keyframes drift{
+  to{ transform:translateY(112vh) translateX(var(--dx,0)) rotate(var(--rot,180deg)); }
+}
+@media (prefers-reduced-motion:reduce){ .petal{animation:none; display:none} }
+
+main{
+  position:relative; z-index:1;
+  max-width:440px; margin:0 auto; padding:64px 24px 56px;
+  text-align:center;
+}
+
+/* ── photo ────────────────────────────────────────── */
+.photo{
+  width:152px; height:152px; margin:0 auto 22px; border-radius:50%;
+  position:relative;
+}
+.photo img{
+  width:100%; height:100%; border-radius:50%; object-fit:cover;
+  object-position:50% 25%;
+  border:1px solid var(--gold);
+  box-shadow:0 8px 24px rgba(58,42,26,.18);
+}
+.photo::before{
+  content:""; position:absolute; inset:-8px; border:1px solid rgba(201,154,78,.4); border-radius:50%;
+}
+
+h1{
+  margin:0 0 6px; font-weight:300; font-family:var(--serif);
+  font-size:clamp(2.5rem,9vw,3.4rem); letter-spacing:.03em; line-height:1.05;
+  display:flex; align-items:baseline; justify-content:center; flex-wrap:wrap; gap:.05em;
+}
+h1 .amp{
+  font-family:var(--script); font-size:1.5em; color:var(--blush-deep);
+  margin:0 .06em; line-height:.6; position:relative; top:.06em;
+}
+
+.tagline{
+  font-style:italic; color:var(--espresso-soft);
+  font-size:1.05rem; letter-spacing:.02em; margin:0 0 22px;
+}
+
+.flourish{display:flex; align-items:center; justify-content:center; gap:10px; margin:0 auto 34px; max-width:280px}
+.flourish svg{flex:none}
+.flourish .line{height:1px; flex:1; background:linear-gradient(90deg,transparent,var(--gold))}
+.flourish .line.right{background:linear-gradient(90deg,var(--gold),transparent)}
+
+/* ── link stack ───────────────────────────────────── */
+.links{list-style:none; margin:0 0 40px; padding:0; display:flex; flex-direction:column; gap:14px}
+.links a{
+  display:flex; align-items:center; gap:14px;
+  background:var(--card); border:1px solid var(--card-line); border-radius:999px;
+  padding:16px 24px; text-decoration:none;
+  font-family:var(--serif); font-size:1.15rem; font-weight:500; letter-spacing:.03em;
+  color:var(--espresso);
+  box-shadow:0 1px 2px rgba(58,42,26,.05);
+  transition:background .16s ease, border-color .16s ease, transform .12s ease, box-shadow .16s ease;
+}
+.links .ic{font-size:1.15rem; line-height:1}
+.links .label{flex:1; text-align:left}
+.links .go{color:var(--gold); font-family:var(--body); font-style:italic; font-size:.95rem; opacity:.8}
+.links a:hover, .links a:focus-visible{
+  background:var(--blush); border-color:var(--blush-deep); color:#fff;
+  transform:translateY(-1px); box-shadow:0 6px 16px rgba(201,123,116,.28);
+  outline:none;
+}
+.links a:hover .go, .links a:focus-visible .go{ color:#fff; opacity:.9 }
+.links a:focus-visible{ box-shadow:0 0 0 3px rgba(201,154,78,.45) }
+
+.eyebrow{
+  font-family:var(--body); font-style:italic; font-size:.8rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--espresso-soft); opacity:.7; margin:0 0 4px;
+}
+
+footer{
+  color:var(--espresso-soft); font-size:.85rem; font-style:italic;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
+
+/* ── load sequence ────────────────────────────────── */
+@media (prefers-reduced-motion:no-preference){
+  .fade{opacity:0; transform:translateY(8px); animation:in .6s cubic-bezier(.2,.7,.3,1) forwards}
+  @keyframes in{to{opacity:1; transform:none}}
+}
+@media (max-width:380px){
+  .links a{padding:14px 18px; font-size:1.05rem}
+}
+</style>
+</head>
+<body>
+
+<div class="petals" aria-hidden="true">
+  <span class="petal fade" style="left:8%;  animation-duration:16s; animation-delay:0s;  --dx:40px;  --rot:200deg;">🤍</span>
+  <span class="petal fade" style="left:24%; animation-duration:21s; animation-delay:3s;  --dx:-30px; --rot:170deg; font-size:14px;">✿</span>
+  <span class="petal fade" style="left:62%; animation-duration:18s; animation-delay:1s;  --dx:20px;  --rot:220deg;">🤍</span>
+  <span class="petal fade" style="left:80%; animation-duration:23s; animation-delay:5s;  --dx:-40px; --rot:190deg; font-size:14px;">✿</span>
+  <span class="petal fade" style="left:45%; animation-duration:19s; animation-delay:7s;  --dx:15px;  --rot:210deg; font-size:14px;">✿</span>
+</div>
+
+<main>
+
+  <div class="photo fade" style="animation-delay:.05s">
+    <img src="assets/couple.jpg" alt="Morgan and Mikah">
+  </div>
+
+  <h1 class="fade" style="animation-delay:.15s">Morgan<span class="amp">&amp;</span>Mikah</h1>
+  <p class="tagline fade" style="animation-delay:.25s">we're getting married!</p>
+
+  <div class="flourish fade" style="animation-delay:.32s" aria-hidden="true">
+    <span class="line"></span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 1.8 4.8 5.3 4.1 7.7 3.6 10 4.8 12 7.5c2-2.7 4.3-3.9 6.7-3.4 3.5.7 5 4.3 3.3 7.6C19.2 16.4 12 21 12 21z" fill="var(--gold)"/></svg>
+    <span class="line right"></span>
+  </div>
+
+  <p class="eyebrow fade" style="animation-delay:.38s">everything for the big day</p>
+
+  <ul class="links">
+    <li class="fade" style="animation-delay:.44s"><a href="https://morganandmikah.com/"><span class="ic">💌</span><span class="label">RSVP</span><span class="go">example →</span></a></li>
+    <li class="fade" style="animation-delay:.50s"><a href="https://morganandmikah.com/"><span class="ic">📖</span><span class="label">Our Story</span><span class="go">example →</span></a></li>
+    <li class="fade" style="animation-delay:.56s"><a href="https://morganandmikah.com/"><span class="ic">📍</span><span class="label">Wedding Details</span><span class="go">example →</span></a></li>
+    <li class="fade" style="animation-delay:.62s"><a href="https://morganandmikah.com/"><span class="ic">🎁</span><span class="label">Registry</span><span class="go">example →</span></a></li>
+    <li class="fade" style="animation-delay:.68s"><a href="https://morganandmikah.com/"><span class="ic">📸</span><span class="label">Photo Gallery</span><span class="go">example →</span></a></li>
+    <li class="fade" style="animation-delay:.74s"><a href="https://morganandmikah.com/"><span class="ic">💬</span><span class="label">FAQ</span><span class="go">example →</span></a></li>
+  </ul>
+
+  <footer class="fade" style="animation-delay:.85s">made with <span aria-hidden="true">♡</span> for our people</footer>
+
+</main>
+</body>
+</html>
