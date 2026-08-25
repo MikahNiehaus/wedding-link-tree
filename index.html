@@ -170,8 +170,8 @@ footer{
 }
 .music-btn svg{ width:20px; height:20px }
 .music-btn .ic-off{ display:none }
-.music-btn.is-muted .ic-on{ display:none }
-.music-btn.is-muted .ic-off{ display:block }
+.music-btn.is-paused .ic-on{ display:none }
+.music-btn.is-paused .ic-off{ display:block }
 .music-btn:hover, .music-btn:focus-visible{ background:var(--blush); color:#fff; outline:none }
 .music-btn:focus-visible{ box-shadow:0 0 0 3px rgba(201,154,78,.45) }
 
@@ -192,7 +192,7 @@ footer{
 
 <!-- music: "Love" by Alex-Productions (https://onsound.eu/), CC BY 3.0 -->
 <audio id="bgm" src="assets/wedding-music.mp3" loop preload="auto"></audio>
-<button id="musicBtn" class="music-btn fade" style="animation-delay:.9s" type="button" aria-pressed="true" aria-label="Mute music" title="Mute music">
+<button id="musicBtn" class="music-btn fade" style="animation-delay:.9s" type="button" aria-pressed="true" aria-label="Pause music" title="Pause music">
   <svg class="ic ic-on" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
   <svg class="ic ic-off" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.6"/><line x1="2" y1="2" x2="22" y2="22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
 </button>
@@ -258,10 +258,10 @@ footer{
   }
 
   function render(){
-    var audible = !audio.paused && !audio.muted;
-    btn.classList.toggle('is-muted', !audible);
-    btn.setAttribute('aria-pressed', audible);
-    var label = audible ? 'Mute music' : 'Unmute music';
+    var playing = !audio.paused;
+    btn.classList.toggle('is-paused', !playing);
+    btn.setAttribute('aria-pressed', playing);
+    var label = playing ? 'Pause music' : 'Play music';
     btn.setAttribute('aria-label', label);
     btn.title = label;
   }
@@ -288,32 +288,20 @@ footer{
   function tick(){
     requestAnimationFrame(tick);
     if (!connected) tryConnectVisualizer();
-    var spiky = connected && !audio.paused && !audio.muted;
+    var spiky = connected && !audio.paused;
     if (spiky) analyser.getByteFrequencyData(freqData);
     drawGlow(spiky);
   }
 
-  var wantsSound = false;
-  try { wantsSound = localStorage.getItem('bgmUnmuted') === '1'; } catch(e){}
-
   btn.addEventListener('click', function(){
-    var audible = !audio.paused && !audio.muted;
-    if (audible){
-      audio.muted = true;
-    } else {
-      audio.muted = false;
-      if (audio.paused) audio.play().catch(function(){});
-    }
-    try { localStorage.setItem('bgmUnmuted', audio.muted ? '' : '1'); } catch(e){}
+    if (audio.paused) audio.play().catch(function(){});
+    else audio.pause();
     tryConnectVisualizer();
     render();
   });
 
   audio.muted = false;
-  audio.play().catch(function(){
-    if (!wantsSound) audio.muted = true;
-    return audio.play().catch(function(){});
-  }).then(render, render);
+  audio.play().catch(function(){});
   render();
   if (reduced) drawGlow(false); else tick();
 })();
